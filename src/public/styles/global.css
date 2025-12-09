@@ -1,0 +1,170 @@
+/* ========== ✦ UNIVERSAL RESET ✦ ========== */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Poppins",sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ========== ✦ THEME ROOT ✦ ========== */
+html,body{
+  background:#0b0f19;
+  color:#e8ecff;
+  min-height:100vh;
+}
+
+/* Light Mode toggle supported */
+html.light{
+  background:#f4f6ff;
+  color:#111;
+}
+
+/* Scroll smooth */
+html{
+  scroll-behavior:smooth;
+}
+
+/* ========== ✦ SCROLLBAR ✦ ========== */
+::-webkit-scrollbar{ width:7px;}
+::-webkit-scrollbar-thumb{
+  background:#5b61ff;
+  border-radius:50px;
+}
+
+/* ========== ✦ CONTAINERS ✦ ========== */
+.card{
+  background:rgba(255,255,255,0.04);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;
+  padding:20px;
+}
+
+/* light mode */
+html.light .card{
+  background:#fff;
+  color:#111;
+  border-color:#d4d9ff;
+}
+
+/* ========== ✦ BUTTONS ✦ ========== */
+button{
+  cursor:pointer;
+  font-weight:600;
+  border:none;
+  border-radius:10px;
+  transition:0.2s;
+}
+
+.btn-primary{
+  background:#595cff;
+  color:#fff;
+  padding:12px 20px;
+  box-shadow:0 0 18px rgba(89,92,255,0.35);
+}
+.btn-primary:hover{ background:#7276ff; }
+
+/* Danger, Cancel, Delete */
+.btn-danger{ background:#ff4b6b; color:#fff;}
+.btn-danger:hover{ background:#ff6f88; }
+
+/* ========== ✦ TAB HIGHLIGHTS ✦ ========== */
+.nav-active{
+  color:#6d73ff;
+  font-weight:700;
+  border-bottom:3px solid #6d73ff;
+}
+
+/* ========== ✦ INPUT / TEXTAREA ✦ ========== */
+textarea,input{
+  background:#1a1f2e;
+  border:1px solid #2d3550;
+  color:#e7e9fc;
+  padding:12px;
+  border-radius:10px;
+  width:100%;
+  outline:none;
+}
+textarea:focus,input:focus{
+  border-color:#6f76ff;
+  box-shadow:0 0 8px rgba(111,118,255,0.45);
+}
+
+/* Light Mode override */
+html.light textarea,html.light input{
+  background:#eef1ff;
+  color:#111;
+  border-color:#c9cffd;
+}
+
+/* ========== ✦ FLASHCARD ANIMATION ✦ ========== */
+.perspective-1000{ perspective:1000px;}
+.transform-style-3d{ transform-style:preserve-3d;}
+.rotate-y-180{ transform:rotateY(180deg);}
+.backface-hidden{ backface-visibility:hidden; }
+
+/* Flip smooth */
+.flashcard{
+  transition:transform .60s cubic-bezier(.68,-0.55,.27,1.55);
+}
+
+/* ========== ✦ HOVER DEPTH ✦ ========== */
+.hover-rise{
+  transition:0.25s;
+}
+.hover-rise:hover{
+  transform:translateY(-4px);
+  box-shadow:0 10px 30px rgba(88,91,255,0.3);
+}
+
+/* ========== ✦ QUIZ BLOCK ✦ ========== */
+.quiz-box{
+  padding:15px;
+  border-radius:12px;
+  background:#111726;
+  border:1px solid #28314a;
+}
+.quiz-option{
+  padding:12px;
+  border-radius:10px;
+  margin:6px 0;
+  background:#1c2235;
+  transition:0.25s;
+}
+.quiz-option:hover{
+  background:#333c60;
+}
+
+/* Correct / Wrong highlight */
+.quiz-correct{ background:#1fb86e !important; color:#fff;}
+.quiz-wrong{ background:#f5455b !important; color:#fff;}
+
+/* ========== ✦ BOTTOM FADE ✦ ========== */
+.fade-in{
+  animation:fadeIn .8s ease both;
+}
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* ========== ✦ AUDIO PULSE ✦ ========== */
+@keyframes pulse{
+  0%{ transform:scale(1); }
+  50%{ transform:scale(1.08);}
+  100%{ transform:scale(1); }
+}
+.audio-active{
+  animation:pulse 1.1s infinite;
+}
+
+/* ========== ✦ TAGS / LABELS ✦ ========== */
+.tag{
+  font-size:12px;
+  padding:4px 10px;
+  border-radius:50px;
+  background:#6b71ff20;
+  border:1px solid #6b71ff40;
+  color:#8e93ff;
+}
