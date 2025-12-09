@@ -1,0 +1,38 @@
+{
+  "name": "neuronote-ai-study-app",
+  "version": "1.0.0",
+  "description": "An AI-powered learning system to convert notes into highly memorable study material.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "5.0.1",
+    "firebase": "11.6.1",
+    "react-router-dom": "^6.28.0",
+    "react-speech-recognition": "^3.10.0",
+    "react-use-speech": "^2.0.4",
+    "react-text-to-speech": "^1.2.0",
+    "framer-motion": "^11.0.0",
+    "axios": "^1.7.2",
+    "lucide-react": "^0.268.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
