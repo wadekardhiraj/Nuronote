@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AetherForge AI - Turn Anything into a Masterpiece</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui']
+          },
+          boxShadow: {
+            glow: '0 0 25px rgba(56,189,248,.5)',
+            glass: '0 8px 40px rgba(2,6,23,.55)'
+          },
+          backgroundImage: {
+            mesh: 'radial-gradient(circle at 20% 20%, rgba(99,102,241,.25), transparent 35%), radial-gradient(circle at 80% 0%, rgba(20,184,166,.18), transparent 35%), radial-gradient(circle at 30% 100%, rgba(236,72,153,.15), transparent 35%)'
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.min.mjs" type="module"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <style>
+    :root { color-scheme: dark; }
+    body { background: #020617; }
+    .glass { backdrop-filter: blur(16px); background: linear-gradient(135deg, rgba(15,23,42,.62), rgba(15,23,42,.35)); border: 1px solid rgba(148,163,184,.18); }
+    .markdown :is(h1,h2,h3,h4,h5,h6) { font-weight: 800; margin-top: 1.2em; margin-bottom: .55em; }
+    .markdown h1 { font-size: 2rem; }
+    .markdown h2 { font-size: 1.65rem; }
+    .markdown h3 { font-size: 1.35rem; }
+    .markdown p, .markdown li { line-height: 1.72; color: #dbeafe; }
+    .markdown table { width: 100%; border-collapse: collapse; margin: 1rem 0; overflow: hidden; border-radius: .75rem; }
+    .markdown th, .markdown td { border: 1px solid rgba(148,163,184,.25); padding: .65rem .8rem; }
+    .markdown th { background: rgba(30,41,59,.65); }
+    .dropzone.dragover { border-color: #22d3ee; box-shadow: 0 0 0 3px rgba(34,211,238,.25); }
+    .section-visible { opacity: 1 !important; transform: translateY(0) !important; }
+  </style>
+</head>
+<body class="text-slate-100 font-sans min-h-screen bg-mesh bg-fixed">
+  <div id="tsparticles" class="fixed inset-0 -z-10 opacity-70"></div>
+
+  <aside class="fixed left-4 top-4 bottom-4 w-64 glass rounded-2xl p-4 hidden lg:flex flex-col gap-5 shadow-glass">
+    <h1 class="text-xl font-extrabold bg-gradient-to-r from-cyan-300 via-violet-300 to-fuchsia-300 bg-clip-text text-transparent">AetherForge AI</h1>
+    <nav class="space-y-2 text-sm">
+      <a href="#hero" class="block px-3 py-2 rounded-lg hover:bg-slate-800/50">Hero</a>
+      <a href="#input" class="block px-3 py-2 rounded-lg hover:bg-slate-800/50">Input</a>
+      <a href="#resultSection" class="block px-3 py-2 rounded-lg hover:bg-slate-800/50">Report</a>
+      <a href="#historySection" class="block px-3 py-2 rounded-lg hover:bg-slate-800/50">History</a>
+    </nav>
+    <button id="openSettings" class="mt-auto w-full px-4 py-2 rounded-lg bg-slate-800/70 hover:bg-slate-700">⚙️ Settings</button>
+  </aside>
+
+  <main class="lg:ml-72 p-4 md:p-8 space-y-6">
+    <section id="hero" class="glass rounded-3xl p-8 md:p-12">
+      <p class="text-xs uppercase tracking-[.4em] text-cyan-300 mb-3">Turn Anything into a Masterpiece</p>
+      <h2 class="text-3xl md:text-5xl font-black leading-tight">Any Text • Image • PDF → World-Class Interactive Report in Seconds</h2>
+      <p class="mt-5 text-slate-300 max-w-3xl">Upload your raw ideas, visuals, or documents and forge a premium, educational, deeply structured interactive report with diagrams, charts, narration, and export-ready formats.</p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <button id="forgeBtnTop" class="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-500 font-bold shadow-glow">Forge Masterpiece ✨</button>
+        <button id="mobileSettings" class="lg:hidden px-6 py-3 rounded-xl bg-slate-800/80">Settings</button>
+      </div>
+    </section>
+
+    <section id="input" class="glass rounded-3xl p-6">
+      <div class="flex flex-wrap gap-2 mb-4">
+        <button data-tab="text" class="tabBtn px-4 py-2 rounded-lg bg-cyan-500/30">Text Command</button>
+        <button data-tab="image" class="tabBtn px-4 py-2 rounded-lg bg-slate-800/60">Upload Image</button>
+        <button data-tab="pdf" class="tabBtn px-4 py-2 rounded-lg bg-slate-800/60">Upload PDF</button>
+      </div>
+
+      <div id="textTab" class="tabPanel space-y-3">
+        <textarea id="textInput" class="w-full h-52 rounded-xl p-4 bg-slate-900/70 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="Describe what report you want..."></textarea>
+        <div class="text-xs text-slate-300">Examples: “Create an advanced interactive report on AI agents for healthcare startups” · “Turn this into a board-level strategy dossier with charts and architecture diagrams.”</div>
+      </div>
+
+      <div id="imageTab" class="tabPanel hidden">
+        <div id="imageDrop" class="dropzone border-2 border-dashed border-slate-600 rounded-2xl p-8 text-center cursor-pointer">
+          Drop JPG/PNG here or click to upload
+          <input id="imageInput" type="file" accept="image/png,image/jpeg" class="hidden" />
+          <img id="imagePreview" class="max-h-72 mx-auto mt-4 rounded-lg hidden" alt="Preview" />
+        </div>
+      </div>
+
+      <div id="pdfTab" class="tabPanel hidden">
+        <div id="pdfDrop" class="dropzone border-2 border-dashed border-slate-600 rounded-2xl p-8 text-center cursor-pointer">
+          Drop PDF here or click to upload
+          <input id="pdfInput" type="file" accept="application/pdf" class="hidden" />
+          <p id="pdfMeta" class="mt-3 text-slate-300 text-sm"></p>
+        </div>
+      </div>
+
+      <div class="mt-5">
+        <button id="forgeBtn" class="w-full py-4 text-lg font-extrabold rounded-2xl bg-gradient-to-r from-fuchsia-500 via-violet-500 to-cyan-500 hover:scale-[1.01] transition shadow-glow">Forge Masterpiece</button>
+      </div>
+      <div class="mt-4 h-2 bg-slate-800 rounded-full overflow-hidden">
+        <div id="progressBar" class="h-full w-0 bg-gradient-to-r from-cyan-400 to-violet-400 transition-all duration-500"></div>
+      </div>
+    </section>
+
+    <section id="resultSection" class="grid lg:grid-cols-12 gap-4">
+      <div class="lg:col-span-3 glass rounded-2xl p-4">
+        <h3 class="font-bold mb-3">Table of Contents</h3>
+        <ul id="toc" class="space-y-1 text-sm"></ul>
+        <hr class="my-4 border-slate-700">
+        <label class="text-xs block mb-2">Voice</label>
+        <select id="voiceSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2"></select>
+        <label class="text-xs block mt-3 mb-2">Speed</label>
+        <input id="speechRate" type="range" min="0.6" max="1.6" value="1" step="0.1" class="w-full">
+        <div class="grid grid-cols-2 gap-2 mt-3">
+          <button id="listenAll" class="py-2 rounded-lg bg-cyan-600/70">Listen All</button>
+          <button id="pauseSpeech" class="py-2 rounded-lg bg-slate-700">Pause/Resume</button>
+        </div>
+      </div>
+      <div class="lg:col-span-9 glass rounded-2xl p-4 md:p-7">
+        <div class="flex flex-wrap gap-2 mb-4">
+          <button id="copyReport" class="px-3 py-2 rounded-lg bg-slate-800">Copy</button>
+          <button id="exportHtml" class="px-3 py-2 rounded-lg bg-slate-800">Export HTML</button>
+          <button id="exportPdf" class="px-3 py-2 rounded-lg bg-slate-800">Export PDF</button>
+          <button id="fullscreenBtn" class="px-3 py-2 rounded-lg bg-slate-800">Fullscreen</button>
+          <button id="regenBtn" class="px-3 py-2 rounded-lg bg-violet-700/70">Regenerate</button>
+          <button id="editBtn" class="px-3 py-2 rounded-lg bg-slate-700">Edit Prompt</button>
+        </div>
+        <article id="report" class="markdown"></article>
+      </div>
+    </section>
+
+    <section id="historySection" class="glass rounded-2xl p-4">
+      <h3 class="font-bold mb-2">Last 5 Generations</h3>
+      <div id="historyList" class="space-y-2"></div>
+    </section>
+  </main>
+
+  <button id="fab" class="fixed right-6 bottom-6 h-14 w-14 rounded-full bg-gradient-to-r from-cyan-500 to-violet-500 text-2xl shadow-glow">↑</button>
+
+  <div id="settingsModal" class="fixed inset-0 bg-slate-950/70 hidden items-center justify-center p-4 z-50">
+    <div class="glass rounded-2xl p-6 w-full max-w-lg">
+      <h3 class="text-xl font-bold mb-4">Settings</h3>
+      <label class="block text-sm mb-2">OpenAI API Key</label>
+      <input id="apiKey" type="password" class="w-full p-3 rounded-lg bg-slate-900 border border-slate-700" placeholder="sk-..." />
+      <label class="block text-sm mt-4 mb-2">Model</label>
+      <select id="modelSelect" class="w-full p-3 rounded-lg bg-slate-900 border border-slate-700">
+        <option value="gpt-4o">gpt-4o</option>
+        <option value="gpt-4o-mini">gpt-4o-mini</option>
+      </select>
+      <label class="block text-sm mt-4 mb-2">Length Goal</label>
+      <input id="lengthSlider" type="range" min="1" max="4" value="3" class="w-full">
+      <p id="lengthLabel" class="text-sm text-slate-300 mt-2">Long (4,000+ words)</p>
+      <div class="mt-5 flex justify-end gap-2">
+        <button id="closeSettings" class="px-4 py-2 rounded-lg bg-slate-700">Close</button>
+        <button id="saveSettings" class="px-4 py-2 rounded-lg bg-cyan-600">Save</button>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+  import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.min.mjs';
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.worker.min.mjs';
+
+  const $ = (q) => document.querySelector(q);
+  const $$ = (q) => [...document.querySelectorAll(q)];
+  const state = {
+    tab: 'text', imageFile: null, imageData: '', pdfFile: null, pdfText: '', currentPrompt: '', currentReport: '',
+    settings: JSON.parse(localStorage.getItem('aetherforge_settings') || '{}'),
+    history: JSON.parse(localStorage.getItem('aetherforge_history') || '[]'),
+    voices: [], speaking: false
+  };
+
+  const lengthMap = {
+    1: { label: 'Short (1,200+ words)', target: 'at least 1200 words' },
+    2: { label: 'Medium (2,500+ words)', target: 'at least 2500 words' },
+    3: { label: 'Long (4,000+ words)', target: 'at least 4000 words' },
+    4: { label: 'Extremely Detailed (10,000+ words)', target: 'at least 10000 words' }
+  };
+
+  function initParticles() {
+    tsParticles.load('tsparticles', { particles: { number: { value: 45 }, color: { value: ['#22d3ee','#8b5cf6','#f472b6'] }, opacity: { value: .22 }, size: { value: { min: 1, max: 3 } }, move: { enable: true, speed: .45 } } });
+  }
+
+  function setTab(tab) {
+    state.tab = tab;
+    $$('.tabBtn').forEach(btn => btn.className = `tabBtn px-4 py-2 rounded-lg ${btn.dataset.tab===tab ? 'bg-cyan-500/30' : 'bg-slate-800/60'}`);
+    $('#textTab').classList.toggle('hidden', tab!=='text');
+    $('#imageTab').classList.toggle('hidden', tab!=='image');
+    $('#pdfTab').classList.toggle('hidden', tab!=='pdf');
+  }
+
+  function wireDropzone(box, input, onFile) {
+    box.addEventListener('click', () => input.click());
+    ['dragenter','dragover'].forEach(e => box.addEventListener(e, ev => { ev.preventDefault(); box.classList.add('dragover'); }));
+    ['dragleave','drop'].forEach(e => box.addEventListener(e, ev => { ev.preventDefault(); box.classList.remove('dragover'); }));
+    box.addEventListener('drop', (e) => { const f = e.dataTransfer.files?.[0]; if (f) onFile(f); });
+    input.addEventListener('change', (e) => { const f = e.target.files?.[0]; if (f) onFile(f); });
+  }
+
+  async function toBase64(file) {
+    return await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
+  }
+
+  async function parsePdf(file) {
+    const data = new Uint8Array(await file.arrayBuffer());
+    const pdf = await pdfjsLib.getDocument({ data }).promise;
+    let full = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const txt = await page.getTextContent();
+      full += `\n\n[Page ${i}] ` + txt.items.map(it => it.str).join(' ');
+    }
+    $('#pdfMeta').textContent = `${file.name} • ${pdf.numPages} pages`;
+    return full;
+  }
+
+  function progress(p) { $('#progressBar').style.width = `${p}%`; }
+
+  async function forge() {
+    const key = state.settings.apiKey || $('#apiKey').value.trim();
+    if (!key) return alert('Please set API key in settings.');
+
+    let rawInput = '';
+    if (state.tab === 'text') rawInput = $('#textInput').value.trim();
+    if (state.tab === 'image') rawInput = 'Image input provided.';
+    if (state.tab === 'pdf') rawInput = state.pdfText || 'PDF input provided.';
+    if (!rawInput && !state.imageData && !state.pdfText) return alert('Provide some input first.');
+
+    progress(10);
+    const model = state.settings.model || 'gpt-4o';
+    const len = lengthMap[state.settings.length || 3].target;
+
+    const system = `You are an elite report architect. Generate premium educational markdown with ${len}. Include all of these: H1-H6, long explanations, bullet and numbered lists, tables, action checklists, code fences for mermaid diagrams (flowchart, mindmap, timeline, sequence), code fences for chart (valid JSON for Chart.js), unsplash image placeholders (![](https://images.unsplash.com/...)). No sections skipped. Add extra strategic insights beyond user input.`;
+
+    const content = [{ type: 'text', text: `Create a colorful master report from this input:\n\n${rawInput}` }];
+    if (state.imageData) content.push({ type: 'image_url', image_url: { url: state.imageData } });
+    if (state.pdfText) content.push({ type: 'text', text: `Extracted PDF text:\n${state.pdfText}` });
+
+    progress(25);
+    const body = {
+      model,
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content }
+      ],
+      temperature: 0.7
+    };
+
+    try {
+      progress(45);
+      const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` }, body: JSON.stringify(body)
+      });
+      if (!resp.ok) throw new Error(await resp.text());
+      const data = await resp.json();
+      const md = data.choices?.[0]?.message?.content || '# No content returned';
+      state.currentReport = md;
+      state.currentPrompt = rawInput;
+      progress(75);
+      await renderReport(md);
+      saveHistory(rawInput, md);
+      progress(100);
+      confetti({ particleCount: 180, spread: 120, origin: { y: 0.6 } });
+      setTimeout(() => progress(0), 1200);
+    } catch (e) {
+      console.error(e); alert('Generation failed: ' + e.message); progress(0);
+    }
+  }
+
+  async function renderReport(md) {
+    const html = marked.parse(md, { breaks: true });
+    $('#report').innerHTML = html;
+
+    await renderSpecialBlocks();
+    buildTOC();
+    addSectionControls();
+    animateSections();
+  }
+
+  async function renderSpecialBlocks() {
+    const codeBlocks = $$('#report pre code');
+    for (const c of codeBlocks) {
+      const lang = (c.className.match(/language-(\w+)/)||[])[1] || '';
+      const pre = c.closest('pre');
+      if (lang === 'mermaid') {
+        const wrap = document.createElement('div');
+        wrap.className = 'mermaid glass rounded-xl p-3 my-4 overflow-auto';
+        wrap.textContent = c.textContent;
+        pre.replaceWith(wrap);
+      }
+      if (lang === 'chart') {
+        const canvas = document.createElement('canvas');
+        canvas.className = 'my-4 p-4 glass rounded-xl';
+        pre.replaceWith(canvas);
+        try {
+          const cfg = JSON.parse(c.textContent);
+          new Chart(canvas.getContext('2d'), cfg);
+        } catch { canvas.insertAdjacentHTML('afterend', '<p class="text-red-300">Invalid chart JSON block.</p>'); }
+      }
+    }
+    mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+    await mermaid.run({ nodes: $$('.mermaid') });
+  }
+
+  function buildTOC() {
+    const toc = $('#toc'); toc.innerHTML = '';
+    const headings = $$('#report h1, #report h2, #report h3, #report h4, #report h5, #report h6');
+    headings.forEach((h, i) => {
+      if (!h.id) h.id = `sec-${i}`;
+      const level = +h.tagName[1];
+      const li = document.createElement('li');
+      li.innerHTML = `<a href="#${h.id}" class="block hover:text-cyan-300" style="padding-left:${(level-1)*10}px">${h.textContent}</a>`;
+      toc.appendChild(li);
+      const btn = document.createElement('button');
+      btn.textContent = '▶';
+      btn.className = 'ml-2 text-xs text-cyan-300';
+      btn.onclick = () => speak(h.textContent + '. ' + collectSectionText(h));
+      h.appendChild(btn);
+    });
+  }
+
+  function collectSectionText(h) {
+    let txt = '', n = h.nextElementSibling;
+    while (n && !(n.tagName && /^H[1-6]$/.test(n.tagName))) { txt += ' ' + n.textContent; n = n.nextElementSibling; }
+    return txt.slice(0, 4500);
+  }
+
+  function addSectionControls() {
+    const h2s = $$('#report h2');
+    h2s.forEach(h2 => {
+      const btn = document.createElement('button');
+      btn.textContent = 'Collapse';
+      btn.className = 'ml-3 text-xs px-2 py-1 rounded bg-slate-800';
+      let collapsed = false;
+      btn.onclick = () => {
+        collapsed = !collapsed;
+        btn.textContent = collapsed ? 'Expand' : 'Collapse';
+        let n = h2.nextElementSibling;
+        while (n && n.tagName !== 'H2') { n.style.display = collapsed ? 'none' : ''; n = n.nextElementSibling; }
+      };
+      h2.appendChild(btn);
+    });
+  }
+
+  function animateSections() {
+    const elems = $$('#report > *');
+    elems.forEach(el => { el.style.opacity = 0; el.style.transform = 'translateY(18px)'; el.style.transition = 'all .5s ease'; });
+    const io = new IntersectionObserver((entries) => entries.forEach(e => e.isIntersecting && e.target.classList.add('section-visible')), { threshold: .12 });
+    elems.forEach(el => io.observe(el));
+    gsap.from('#report', { opacity: 0, y: 20, duration: .7 });
+  }
+
+  function speak(text) {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const voice = state.voices[$('#voiceSelect').value];
+    if (voice) u.voice = voice;
+    u.rate = +$('#speechRate').value;
+    speechSynthesis.speak(u);
+    state.speaking = true;
+  }
+
+  function loadVoices() {
+    state.voices = speechSynthesis.getVoices();
+    $('#voiceSelect').innerHTML = state.voices.map((v,i) => `<option value="${i}">${v.name} (${v.lang})</option>`).join('');
+  }
+
+  function saveHistory(prompt, report) {
+    state.history.unshift({ prompt, report, at: new Date().toISOString() });
+    state.history = state.history.slice(0, 5);
+    localStorage.setItem('aetherforge_history', JSON.stringify(state.history));
+    renderHistory();
+  }
+
+  function renderHistory() {
+    $('#historyList').innerHTML = state.history.map((h,i)=>`<button data-i="${i}" class="w-full text-left p-3 rounded-lg bg-slate-900/60 hover:bg-slate-800/70"><p class="text-xs text-slate-400">${new Date(h.at).toLocaleString()}</p><p class="truncate">${h.prompt || 'Image/PDF generation'}</p></button>`).join('');
+    $$('#historyList button').forEach(btn=>btn.onclick=()=>{ const h=state.history[+btn.dataset.i]; state.currentReport = h.report; renderReport(h.report); });
+  }
+
+  function saveSettings() {
+    state.settings = {
+      apiKey: $('#apiKey').value.trim(),
+      model: $('#modelSelect').value,
+      length: +$('#lengthSlider').value
+    };
+    localStorage.setItem('aetherforge_settings', JSON.stringify(state.settings));
+    $('#settingsModal').classList.add('hidden');
+  }
+
+  function loadSettings() {
+    $('#apiKey').value = state.settings.apiKey || '';
+    $('#modelSelect').value = state.settings.model || 'gpt-4o';
+    $('#lengthSlider').value = state.settings.length || 3;
+    $('#lengthLabel').textContent = lengthMap[$('#lengthSlider').value].label;
+  }
+
+  function exportStandaloneHtml() {
+    const doc = `<!doctype html><html><head><meta charset='UTF-8'><title>AetherForge Report</title><style>body{font-family:Inter,Arial;background:#0f172a;color:#e2e8f0;padding:30px;line-height:1.7}table,td,th{border:1px solid #334155;border-collapse:collapse;padding:8px}img{max-width:100%;border-radius:12px}</style></head><body>${$('#report').innerHTML}</body></html>`;
+    const blob = new Blob([doc], { type: 'text/html' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'aetherforge-report.html'; a.click();
+  }
+
+  async function exportPdf() {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p','pt','a4');
+    await pdf.html($('#report'), { margin: [20,20,20,20], autoPaging: 'text', html2canvas: { scale: 0.4 } });
+    pdf.save('aetherforge-report.pdf');
+  }
+
+  // events
+  $$('.tabBtn').forEach(b => b.onclick = () => setTab(b.dataset.tab));
+  wireDropzone($('#imageDrop'), $('#imageInput'), async (f) => { state.imageFile = f; state.imageData = await toBase64(f); $('#imagePreview').src = state.imageData; $('#imagePreview').classList.remove('hidden'); setTab('image'); });
+  wireDropzone($('#pdfDrop'), $('#pdfInput'), async (f) => { state.pdfFile = f; state.pdfText = await parsePdf(f); setTab('pdf'); });
+
+  $('#forgeBtn').onclick = forge; $('#forgeBtnTop').onclick = forge;
+  $('#openSettings').onclick = () => $('#settingsModal').classList.remove('hidden');
+  $('#mobileSettings').onclick = () => $('#settingsModal').classList.remove('hidden');
+  $('#closeSettings').onclick = () => $('#settingsModal').classList.add('hidden');
+  $('#saveSettings').onclick = saveSettings;
+  $('#lengthSlider').oninput = (e) => $('#lengthLabel').textContent = lengthMap[e.target.value].label;
+
+  $('#listenAll').onclick = () => speak($('#report').innerText.slice(0, 120000));
+  $('#pauseSpeech').onclick = () => speechSynthesis.paused ? speechSynthesis.resume() : speechSynthesis.pause();
+  $('#copyReport').onclick = async () => { await navigator.clipboard.writeText($('#report').innerText); alert('Report copied'); };
+  $('#exportHtml').onclick = exportStandaloneHtml;
+  $('#exportPdf').onclick = exportPdf;
+  $('#fullscreenBtn').onclick = () => !document.fullscreenElement ? document.documentElement.requestFullscreen() : document.exitFullscreen();
+  $('#regenBtn').onclick = forge;
+  $('#editBtn').onclick = () => { setTab('text'); $('#textInput').focus(); window.scrollTo({top: $('#input').offsetTop-20, behavior:'smooth'}); };
+  $('#fab').onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  speechSynthesis.onvoiceschanged = loadVoices;
+  loadSettings(); renderHistory(); initParticles(); loadVoices();
+</script>
+</body>
+</html>
